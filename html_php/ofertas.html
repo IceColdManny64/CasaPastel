@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ofertas - La Casa del Pastel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Playfair Display', serif;
+        }
+
+        body {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('https://img.freepik.com/premium-photo/chocolate-cake-with-chocolate-icing-chocolate-shavings_762785-94211.jpg') no-repeat center center/cover;
+            z-index: -1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+            color: white;
+        }
+
+        .logo-img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 1em;
+        }
+
+        .icons a {
+            margin-left: 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .icon-img {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s;
+        }
+
+        .icon-img:hover {
+            transform: scale(1.1);
+        }
+
+        .offers-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .offers-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .offers-header h1 {
+            font-size: 2.5em;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .offers-header p {
+            font-size: 1.2em;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .offer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .offer-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .offer-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .offer-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .offer-content {
+            padding: 20px;
+        }
+
+        .offer-tag {
+            display: inline-block;
+            background-color: #e76f51;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+
+        .offer-title {
+            font-size: 1.5em;
+            color: #5a3d7a;
+            margin-bottom: 10px;
+        }
+
+        .offer-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .offer-price {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #999;
+            margin-right: 10px;
+        }
+
+        .new-price {
+            font-size: 1.3em;
+            color: #e76f51;
+            font-weight: bold;
+        }
+
+        .offer-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .details-btn {
+            background-color: #5a3d7a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .details-btn:hover {
+            background-color: #3d2855;
+        }
+
+        .order-btn {
+            background-color: #f4a261;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-btn:hover {
+            background-color: #e76f51;
+        }
+
+        .weekly-offer-tag {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            background-color: #e76f51;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            transform: rotate(15deg);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .weekly-offer-tag::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid #e76f51;
+        }
+
+        .weekly-offer-tag h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .weekly-offer-tag p {
+            font-size: 0.9em;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0% { transform: rotate(15deg) scale(1); }
+            50% { transform: rotate(15deg) scale(1.05); }
+            100% { transform: rotate(15deg) scale(1); }
+        }
+
+        .pointing-arrow {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #e76f51;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) rotate(180deg) translateY(0);}
+            40% {transform: translateX(-50%) rotate(180deg) translateY(-10px);}
+            60% {transform: translateX(-50%) rotate(180deg) translateY(-5px);}
+        }
+
+        @media (max-width: 768px) {
+            .weekly-offer-tag {
+                width: 100px;
+                height: 100px;
+                top: 80px;
+                right: 10px;
+            }
+            
+            .weekly-offer-tag h3 {
+                font-size: 0.9em;
+            }
+            
+            .weekly-offer-tag p {
+                font-size: 0.8em;
+            }
+        }
+
+        .highlight-offers {
+            animation: highlight 2s;
+        }
+
+        @keyframes highlight {
+            0% { background-color: transparent; }
+            20% { background-color: rgba(244, 162, 97, 0.3); }
+            100% { background-color: transparent; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="CasaPastel.png" alt="Logo" class="logo-img">
+            La Casa del Pastel
+        </div>
+        <nav>
+            <a href="PantallaPrincipal.html">Inicio</a>
+            <a href="menu.html">Menú</a>
+            <a href="conocenos.html">Conócenos</a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+        <div class="icons">
+            <a href="#"><img src="https://static.vecteezy.com/system/resources/previews/016/716/469/non_2x/instagram-icon-free-png.png" alt="Instagram" class="icon-img"></a>
+            <a href="#"><img src="https://cliply.co/wp-content/uploads/2019/04/371903520_SOCIAL_ICONS_FACEBOOK.png" alt="Facebook" class="icon-img"></a>
+            <a href="#"><img src="https://vectorseek.com/wp-content/uploads/2023/07/Twitter-X-Logo-Vector-01-2.jpg" alt="X" class="icon-img"></a>
+            <a href="#">🛒 0</a>
+        </div>
+    </header>
+
+    <a href="#ofertas-destacadas" class="weekly-offer-tag">
+        <h3>OFERTAS</h3>
+        <p>DE LA SEMANA</p>
+        <div class="pointing-arrow"></div>
+    </a>
+
+    <div class="offers-container">
+        <div class="offers-header">
+            <h1>Ofertas Especiales</h1>
+            <p>Disfruta de nuestros descuentos y promociones exclusivas</p>
+        </div>
+
+        <div id="ofertas-destacadas" class="offer-cards">
+            <div class="offer-card">
+                <div class="offer-image" style="background-image: url('https://images.unsplash.com/photo-1563805042-7684c019e1cb');"></div>
+                <div class="offer-content">
+                    <span class="offer-tag">NUEVO</span>
+                    <h3 class="offer-title">Chocolate Artesanal</h3>
+                    <p class="offer-description">Nuestro nuevo chocolate premium con un 20% de descuento en tu primera compra.</p>
+                    <div class="offer-price">
+                        <span class="old-price">$120</span>
+                        <span class="new-price">$96</span>
+                    </div>
+                    <div class="offer-actions">
+                        <button class="details-btn">Ver ingredientes</button>
+                        <button class="order-btn">Ordenar ahora</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offer-card">
+                <div class="offer-image" style="background-image: url('https://images.unsplash.com/photo-1486427944299-d1955d23e34d');"></div>
+                <div class="offer-content">
+                    <span class="offer-tag">OFERTA</span>
+                    <h3 class="offer-title">Todos los Cupcakes</h3>
+                    <p class="offer-description">¡Oferta especial! Todos nuestros cupcakes a mitad de precio por tiempo limitado.</p>
+                    <div class="offer-price">
+                        <span class="old-price">$60</span>
+                        <span class="new-price">$30</span>
+                    </div>
+                    <div class="offer-actions">
+                        <button class="details-btn">Ver opciones</button>
+                        <button class="order-btn">Ordenar ahora</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offer-card">
+                <div class="offer-image" style="background-image: url('https://igrc.cr/wp-content/uploads/red-velvet-pastel_4vll.webp');"></div>
+                <div class="offer-content">
+                    <span class="offer-tag">TEMPORADA</span>
+                    <h3 class="offer-title">Pastel de Red Velvet</h3>
+                    <p class="offer-description">Delicioso pastel de terciopelo rojo con un 15% de descuento esta semana.</p>
+                    <div class="offer-price">
+                        <span class="old-price">$350</span>
+                        <span class="new-price">$297.50</span>
+                    </div>
+                    <div class="offer-actions">
+                        <button class="details-btn">Más información</button>
+                        <button class="order-btn">Ordenar ahora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.weekly-offer-tag').addEventListener('click', function() {
+            const offersSection = document.getElementById('ofertas-destacadas');
+            offersSection.classList.add('highlight-offers');
+            
+            setTimeout(() => {
+                offersSection.classList.remove('highlight-offers');
+            }, 2000);
+        });
+    </script>
+
+</body>
+
+</html>

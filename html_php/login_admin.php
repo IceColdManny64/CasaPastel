@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows === 1) {
         $_SESSION['rol'] = 'admin';
         $_SESSION['usuario'] = $usuario;
-        header("Location: adminDashboard.html");
+        header("Location: panel.html");
         exit;
     }
 
