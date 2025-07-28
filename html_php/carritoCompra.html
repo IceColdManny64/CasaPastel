@@ -161,7 +161,7 @@
     </div>
 
     <nav>
-      <a href="catalago.html">Catálogo</a>
+      <a href="menu.html">Catálogo</a>
       <a href="pantallaUsuario.html">Perfil</a>
       <button id="btn-pagar" onclick="irAPago()">Realizar pago</button>
     </nav>
@@ -169,7 +169,28 @@
 
   <main>
     <h1>Carrito de Compras</h1>
-    <div id="contenedor-carrito"></div>
+<div id="carrito-lista"></div>
+<div id="carrito-total" style="text-align: right; font-weight: bold; margin-top: 20px;"></div>
+
+
+<script>
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  const lista = document.getElementById("carrito-lista");
+
+  carrito.forEach(producto => {
+    lista.innerHTML += `
+      <div style="display:flex; align-items:center; margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:15px;">
+        <img src="${producto.imagen_url}" alt="${producto.titulo}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; margin-right:15px;">
+        <div>
+          <h3 style="margin:0; color:#b33f4f;">${producto.titulo}</h3>
+          <p><strong>$${producto.precio}</strong></p>
+          <p>${producto.descripcion}</p>
+          <p><small>Cantidad: ${producto.cantidad}</small></p>
+        </div>
+      </div>
+    `;
+  });
+</script>
 
     <button id="vaciar-carrito" onclick="vaciarCarrito()">Vaciar carrito</button>
   </main>
@@ -216,6 +237,67 @@
 
     window.onload = mostrarCarrito;
   </script>
+<script>
+  function mostrarCarrito() {
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const lista = document.getElementById("carrito-lista");
+    const totalDiv = document.getElementById("carrito-total");
+
+    lista.innerHTML = "";
+    let totalGeneral = 0;
+
+    carrito.forEach((producto, index) => {
+      const totalPorProducto = (producto.precio * producto.cantidad).toFixed(2);
+      totalGeneral += parseFloat(totalPorProducto);
+
+      lista.innerHTML += `
+        <div style="display:flex; align-items:center; margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:15px;">
+          <img src="${producto.imagen_url}" alt="${producto.titulo}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; margin-right:15px;">
+          <div style="flex:1;">
+            <h3 style="margin:0; color:#b33f4f;">${producto.titulo}</h3>
+            <p><strong>Precio unitario:</strong> $${producto.precio}</p>
+            <p>${producto.descripcion}</p>
+            <label for="cantidad-${index}">Cantidad:</label>
+            <input type="number" id="cantidad-${index}" min="1" value="${producto.cantidad}" 
+                   style="width: 60px; padding: 5px; margin-left: 8px; border: 1px solid #ccc; border-radius: 4px;"
+                   onchange="actualizarCantidad(${index}, this.value)">
+            <p><strong>Total: $${totalPorProducto}</strong></p>
+            
+          </div>
+        </div>
+      `;
+    });
+
+    totalDiv.innerHTML = `Total del carrito: $${totalGeneral.toFixed(2)}`;
+  }
+
+function actualizarCantidad(index, nuevaCantidad) {
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  nuevaCantidad = parseInt(nuevaCantidad);
+
+  if (nuevaCantidad < 1) {
+    alert("La cantidad debe ser al menos 1.");
+    mostrarCarrito();
+    return;
+  }
+
+  const disponible = carrito[index].stock;
+
+  if (nuevaCantidad > disponible) {
+    alert(`Lo sentimos. Solo hay ${disponible} unidades disponibles de "${carrito[index].titulo}".`);
+    mostrarCarrito();
+    return;
+  }
+
+  carrito[index].cantidad = nuevaCantidad;
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+  mostrarCarrito(); // recargar vista
+}
+
+
+  // Inicializar al cargar
+  mostrarCarrito();
+</script>
 
 </body>
 </html>

@@ -396,12 +396,19 @@ function renderizarProductos(productos) {
             <strong>Tamaño:</strong> ${p.tamanio.toUpperCase()}
           </p>
           <p class="product-description">${p.descripcion}</p>
-          <button class="select-btn">Seleccionar</button>
+          <div class="actions">
+            <!-- NUEVO: botón que lleva al detalle -->
+            <button class="select-btn" 
+                    onclick="window.location='detalle_postre.php?id=${p.id}'">
+              Ver detalle
+            </button>
+          </div>
         </div>
       </div>
     `;
   });
 }
+
 
 
 function renderizarCategorias() {

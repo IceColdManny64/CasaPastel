@@ -1,19 +1,19 @@
 <?php
 // detalle_postre.php
-
 require_once 'pwclass.php';
-$db = new PWClass();
+$db   = new PWClass();
 $conn = $db->obtenerConexion();
 
-// Obtener el ID por GET y sanitizar
+// Obtener y validar ID
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($id <= 0) {
     header("Location: ofertas.php");
     exit;
 }
 
-// Consultar el postre
-$stmt = $conn->prepare("SELECT id, titulo, descripcion, precio, categoria, tamanio, sabor, imagen_url FROM postresitos WHERE id = ?");
+// Consulta
+$stmt = $conn->prepare("SELECT id, titulo, descripcion, precio, categoria, tamanio, sabor, imagen_url, stock FROM postresitos WHERE id = ?");
+
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -25,7 +25,7 @@ $postre = $res->fetch_assoc();
 $stmt->close();
 $db->cerrar();
 
-// Calcular descuento simulado (20%)
+// Simulación de 20% OFF
 $old_price = $postre['precio'];
 $new_price = round($old_price * 0.8, 2);
 ?>
@@ -46,7 +46,7 @@ $new_price = round($old_price * 0.8, 2);
     .icons a { margin-left:15px; }
     .icon-img { width:24px; height:24px; transition:transform .2s; }
     .icon-img:hover { transform:scale(1.1); }
-    .container { max-width:800px; margin:140px auto 60px; background:#fff; 
+    .container { max-width:800px; margin:140px auto 60px; background:#fff;
                  border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden; }
     .hero { width:100%; height:400px; background-size:cover; background-position:center; }
     .details { padding:30px; }
@@ -70,7 +70,7 @@ $new_price = round($old_price * 0.8, 2);
 </head>
 <body>
 
-  <!-- Barra de navegación fija -->
+  <!-- Nav fija -->
   <header>
     <div class="logo">
       <img src="CasaPastel.png" alt="Logo" class="logo-img">
@@ -87,16 +87,13 @@ $new_price = round($old_price * 0.8, 2);
       <a href="https://instagram.com" target="_blank"><img src="instagram-icon.png" class="icon-img" alt="Instagram"></a>
       <a href="https://facebook.com" target="_blank"><img src="facebook-icon.png" class="icon-img" alt="Facebook"></a>
       <a href="https://twitter.com" target="_blank"><img src="twitter-icon.png" class="icon-img" alt="Twitter"></a>
-      <a href="carritoCompra.html">🛒 0</a>
+      <a href="carritoCompra.html">🛒 Carrito</a>
     </div>
   </header>
 
-  <!-- Contenedor principal -->
+  <!-- Contenido -->
   <div class="container">
-    <!-- Imagen destacada -->
     <div class="hero" style="background-image:url('<?= htmlspecialchars($postre['imagen_url']) ?>')"></div>
-
-    <!-- Detalles -->
     <div class="details">
       <h1><?= htmlspecialchars($postre['titulo']) ?></h1>
       <div class="price">
@@ -108,19 +105,49 @@ $new_price = round($old_price * 0.8, 2);
         <span>Tamaño: <?= htmlspecialchars(strtoupper($postre['tamanio'])) ?></span>
         <span>Sabor: <?= htmlspecialchars($postre['sabor']) ?></span>
       </div>
-      <div class="description">
-        <?= nl2br(htmlspecialchars($postre['descripcion'])) ?>
-      </div>
+      <div class="description"><?= nl2br(htmlspecialchars($postre['descripcion'])) ?></div>
       <div class="actions">
-        <button class="btn-cart" onclick="window.location='carritoCompra.html'">
-          Añadir al carrito
-        </button>
-        <button class="btn-back" onclick="history.back()">
-          Volver
-        </button>
+<button class="btn-cart">Añadir al carrito</button>
+
+        <button class="btn-back" onclick="history.back()">Volver</button>
       </div>
     </div>
   </div>
+
+
+<script>
+document.querySelector(".btn-cart").addEventListener("click", function () {
+  const producto = {
+    id: <?= $postre['id'] ?>,
+    titulo: <?= json_encode($postre['titulo']) ?>,
+    precio: <?= $new_price ?>,
+    descripcion: <?= json_encode($postre['descripcion']) ?>,
+    imagen_url: <?= json_encode($postre['imagen_url']) ?>,
+    cantidad: 1,
+    stock: <?= intval($postre['stock'] ?? 10) ?> // usa 10 si no hay columna
+  };
+
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+  const indexExistente = carrito.findIndex(p => p.id === producto.id);
+
+  if (indexExistente !== -1) {
+    // Ya existe → sumamos cantidad (si no supera stock)
+    const existente = carrito[indexExistente];
+    if (existente.cantidad + 1 > existente.stock) {
+      alert(`Solo hay ${existente.stock} unidades disponibles.`);
+      return;
+    }
+    carrito[indexExistente].cantidad += 1;
+  } else {
+    carrito.push(producto);
+  }
+
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+  alert("Producto añadido al carrito.");
+});
+</script>
+
 
 </body>
 </html>
