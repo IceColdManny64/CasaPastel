@@ -195,6 +195,12 @@ include 'ofertas_logic.php';
         .details-btn:hover {
             background-color: #3d2855;
         }
+nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: white;
+  font-size: 1em;
+}
 
         .order-btn {
             background-color: #f4a261;
@@ -323,12 +329,12 @@ include 'ofertas_logic.php';
       <a href="ofertas.php">Ofertas</a>
       <a href="contacto.html">Contacto</a>
     </nav>
-    <div class="icons">
-      <a href="https://instagram.com" target="_blank"><img src="instagram-icon.png" alt="Instagram" class="icon-img"></a>
-      <a href="https://facebook.com" target="_blank"><img src="facebook-icon.png" alt="Facebook" class="icon-img"></a>
-      <a href="https://twitter.com" target="_blank"><img src="twitter-icon.png" alt="X" class="icon-img"></a>
-      <a href="carritoCompra.html">🛒 0</a>
-    </div>
+        <div class="icons">
+            <a href="https://www.instagram.com/"><img src="https://static.vecteezy.com/system/resources/previews/016/716/469/non_2x/instagram-icon-free-png.png" alt="Instagram" class="icon-img"></a>
+            <a href="https://www.facebook.com/"><img src="https://cliply.co/wp-content/uploads/2019/04/371903520_SOCIAL_ICONS_FACEBOOK.png" alt="Facebook" class="icon-img"></a>
+            <a href="https://www.x.com/"><img src="https://vectorseek.com/wp-content/uploads/2023/07/Twitter-X-Logo-Vector-01-2.jpg" alt="X" class="icon-img"></a>
+            <a href="carritoCompra.html">🛒</a>
+        </div>
   </header>
 
   <div class="offers-container">
