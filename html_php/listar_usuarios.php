@@ -1,21 +1,10 @@
 <?php
 require_once 'pwclass.php';
-
 $db = new PWClass();
 $conn = $db->obtenerConexion();
 
-$sql = "SELECT id, correo, pass FROM usuarios";
-
-$result = $conn->query($sql);
-
-$usuarios = [];
-
-while ($row = $result->fetch_assoc()) {
-    $usuarios[] = $row;
-}
+$res = $conn->query("SELECT id, correo, pass FROM usuarios");
+$users = $res->fetch_all(MYSQLI_ASSOC);
 
 header('Content-Type: application/json');
-echo json_encode($usuarios);
-
-$db->cerrar();
-?>
+echo json_encode($users);

@@ -1,20 +1,21 @@
 <?php
 require_once 'pwclass.php';
+header('Content-Type: application/json; charset=UTF-8');
 
-$db = new PWClass();
-$conn = $db->obtenerConexion();
+try {
+    $db = new PWClass();
+    $conn = $db->obtenerConexion();
 
-$query = "SELECT * FROM postresitos";
-$result = $conn->query($query);
+    $sql = "SELECT * FROM postresitos";
+    $result = $conn->query($sql);
 
-$postres = [];
+    $postres = [];
+    while ($row = $result->fetch_assoc()) {
+        $postres[] = $row;
+    }
 
-while ($row = $result->fetch_assoc()) {
-    $postres[] = $row;
+    echo json_encode($postres);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Error al listar postres']);
 }
-
-header('Content-Type: application/json');
-echo json_encode($postres);
-
-$conn->close();
-?>

@@ -1,14 +1,18 @@
 <?php
 require_once 'pwclass.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $id = $_POST["id"] ?? null;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit;
+}
 
-    if ($id === null) {
-        echo "ID no proporcionado.";
-        exit;
-    }
+$id = intval($_POST['id'] ?? 0);
+if (!$id) {
+    echo "ID inválido.";
+    exit;
+}
 
+try {
     $db = new PWClass();
     $conn = $db->obtenerConexion();
 
@@ -16,14 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "Postre eliminado.";
+        echo "Postre eliminado exitosamente.";
     } else {
-        echo "Error al eliminar postre.";
+        echo "Error al eliminar el postre.";
     }
-
-    $stmt->close();
-    $db->cerrar();
-} else {
-    echo "Acceso no permitido.";
+} catch (Exception $e) {
+    echo "Error en el servidor.";
 }
-?>

@@ -1,33 +1,20 @@
 <?php
 require_once 'pwclass.php';
+$db = new PWClass();
+$conn = $db->obtenerConexion();
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $id       = $_POST["id"]       ?? null;
-    $nombre   = $_POST["nombre"]   ?? "";
-    $edad     = $_POST["edad"]     ?? 0;
-    $correo   = $_POST["correo"]   ?? "";
-    $password = $_POST["password"] ?? "";
+$id = intval($_POST['id'] ?? 0);
+$correo = $_POST['correo'] ?? '';
+$pass   = $_POST['pass']   ?? '';
 
-    if ($id === null) {
-        echo "ID no proporcionado.";
-        exit;
-    }
+$stmt = $conn->prepare("UPDATE usuarios SET correo=?, pass=? WHERE id=?");
+$stmt->bind_param('ssi', $correo, $pass, $id);
 
-    $db = new PWClass();
-    $conn = $db->obtenerConexion();
-
-    $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, edad = ?, correo = ?, pass = ? WHERE id = ?");
-    $stmt->bind_param("sissi", $nombre, $edad, $correo, $password, $id);
-
-    if ($stmt->execute()) {
-        echo "Usuario actualizado correctamente.";
-    } else {
-        echo "Error al actualizar usuario.";
-    }
-
-    $stmt->close();
-    $db->cerrar();
+if ($stmt->execute()) {
+  $resp = ['ok'=>true, 'msg'=>'Usuario actualizado correctamente.'];
 } else {
-    echo "Acceso no permitido.";
+  $resp = ['ok'=>false,'msg'=>'Error al actualizar usuario.'];
 }
-?>
+
+header('Content-Type: application/json');
+echo json_encode($resp);

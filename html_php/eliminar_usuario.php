@@ -1,29 +1,17 @@
 <?php
 require_once 'pwclass.php';
+$db = new PWClass();
+$conn = $db->obtenerConexion();
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $id = $_POST["id"] ?? null;
+$id = intval($_POST['id'] ?? 0);
+$stmt = $conn->prepare("DELETE FROM usuarios WHERE id=?");
+$stmt->bind_param('i', $id);
 
-    if ($id === null) {
-        echo "ID no recibido.";
-        exit;
-    }
-
-    $db = new PWClass();
-    $conn = $db->obtenerConexion();
-
-    $stmt = $conn->prepare("DELETE FROM usuarios WHERE id = ?");
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        echo "Usuario eliminado correctamente.";
-    } else {
-        echo "Error al eliminar el usuario.";
-    }
-
-    $stmt->close();
-    $db->cerrar();
+if ($stmt->execute()) {
+  $resp = ['ok'=>true, 'msg'=>'Usuario eliminado correctamente.'];
 } else {
-    echo "Acceso no autorizado.";
+  $resp = ['ok'=>false,'msg'=>'Error al eliminar usuario.'];
 }
-?>
+
+header('Content-Type: application/json');
+echo json_encode($resp);

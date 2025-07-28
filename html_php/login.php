@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows === 1) {
         $_SESSION['rol'] = 'cliente';
         $_SESSION['usuario'] = $correo;
-        header("Location: menu.html");
+        header("Location: PantallaPrincipal.html");
         exit;
     }
 

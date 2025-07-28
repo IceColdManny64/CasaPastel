@@ -2,24 +2,27 @@
 require_once 'pwclass.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $nombre = $_POST["nombre"] ?? "";
-    $edad = $_POST["edad"] ?? "";
-    $correo = $_POST["correo"] ?? "";
-    $password = $_POST["password"] ?? "";
-    $confirmar = $_POST["confirmar"] ?? "";
+    $correo   = trim($_POST["correo"] ?? "");
+    $password = trim($_POST["password"] ?? "");
 
     // Validar campos obligatorios
-    if (empty($nombre) || empty($edad) || empty($correo) || empty($password) || empty($confirmar)) {
-        echo "<script>alert('Todos los campos son obligatorios.'); window.history.back();</script>";
+    if (empty($correo) || empty($password)) {
+        echo "<script>
+                alert('Correo y contraseña son obligatorios.');
+                window.history.back();
+              </script>";
         exit;
     }
 
-    if ($password !== $confirmar) {
-        echo "<script>alert('Las contraseñas no coinciden.'); window.history.back();</script>";
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>
+                alert('Ingresa un correo electrónico válido.');
+                window.history.back();
+              </script>";
         exit;
     }
 
-    $db = new PWClass();
+    $db   = new PWClass();
     $conn = $db->obtenerConexion();
 
     // Verificar si el correo ya existe
@@ -28,24 +31,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute();
     $stmt->store_result();
     if ($stmt->num_rows > 0) {
-        echo "<script>alert('Este correo ya está registrado.'); window.history.back();</script>";
+        echo "<script>
+                alert('Este correo ya está registrado.');
+                window.history.back();
+              </script>";
         exit;
     }
     $stmt->close();
 
     // Insertar usuario nuevo
-    $stmt = $conn->prepare("INSERT INTO usuarios (nombre, edad, correo, pass) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("siss", $nombre, $edad, $correo, $password);
+    $stmt = $conn->prepare("INSERT INTO usuarios (correo, pass) VALUES (?, ?)");
+    $stmt->bind_param("ss", $correo, $password);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Registro exitoso. Ahora puedes iniciar sesión.'); window.location.href='loginUsuario.html';</script>";
+        echo "<script>
+                alert('Registro exitoso. Ahora puedes iniciar sesión.');
+                window.location.href='loginUsuario.html';
+              </script>";
     } else {
-        echo "<script>alert('Error al registrar.'); window.history.back();</script>";
+        echo "<script>
+                alert('Error al registrar el usuario.');
+                window.history.back();
+              </script>";
     }
 
     $stmt->close();
     $db->cerrar();
-} else {
-    echo "<script>alert('Acceso no permitido.'); window.location.href='registroUsuario.html';</script>";
+    exit;
 }
 ?>
+
